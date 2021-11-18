@@ -103,7 +103,7 @@
          <item>
           <widget class="QPushButton" name="Q4_4">
            <property name="text">
-            <string>4.4 SHearing</string>
+            <string>4.4 Shearing</string>
            </property>
           </widget>
          </item>

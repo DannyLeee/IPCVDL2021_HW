@@ -124,7 +124,7 @@ class Ui_MainWindow(object):
         self.Q4_1.setText(_translate("MainWindow", "4.1 Resize"))
         self.Q4_2.setText(_translate("MainWindow", "4.2 Translation"))
         self.Q4_3.setText(_translate("MainWindow", "4.3 Rotation, Scaling"))
-        self.Q4_4.setText(_translate("MainWindow", "4.4 SHearing"))
+        self.Q4_4.setText(_translate("MainWindow", "4.4 Shearing"))
         self.groupBox_3.setTitle(_translate("MainWindow", "3. Edge Detection"))
         self.Q3_1.setText(_translate("MainWindow", "3.1 Gaussian Blur"))
         self.Q3_2.setText(_translate("MainWindow", "3.2 Sobel X"))
