@@ -22,8 +22,14 @@ class Main(QMainWindow, ui.Ui_MainWindow):
         self.Q2_1.clicked.connect(self.gaussian_blur)
         self.Q2_2.clicked.connect(self.bilateral_filter)
         self.Q2_3.clicked.connect(self.median_filter)
+        self.Q4_1.clicked.connect(self.resize_img)
+        self.Q4_2.clicked.connect(self.translation)
+        self.Q4_3.clicked.connect(self.rotate_and_scale)
+        self.Q4_4.clicked.connect(self.shearing)
+
         self.img_1 = cv2.imread("Dataset/Q1_Image/Sun.jpg")
         self.img_2 = cv2.imread("Dataset/Q2_Image/Lenna_whiteNoise.jpg")
+        self.img_4 = cv2.imread("Dataset/Q4_Image/SQUARE-01.png")
 
     # Q 1.1
     def load_img(self):
@@ -122,6 +128,51 @@ class Main(QMainWindow, ui.Ui_MainWindow):
     # Q 2.3
     def median_filter(self):
         self.blur(3)
+
+    # Q 4.1
+    def resize_img(self):
+        img = self.img_4
+        img = cv2.resize(img, [256, 256])
+        cv2.imshow("Q 4.1", img)
+        self.img_4 = img
+
+    # Q 4.2
+    def translation(self):
+        img = self.img_4
+
+        trans_x = 0
+        trans_y = 60
+        trans_mat = np.array([[1.0, 0, trans_x], [0.0, 1, trans_y]])
+        img = cv2.warpAffine(img, trans_mat, (400, 300))
+
+        win_name = "Q 4.2"
+        cv2.imshow(win_name, img)
+
+        self.img_4 = img
+
+    # Q 4.3
+    def rotate_and_scale(self):
+        img = self.img_4
+        center = (128, 188)
+        angle = 10
+        scale = 0.5
+        rot_mat = cv2.getRotationMatrix2D(center, angle, scale)
+        img = cv2.warpAffine(img, rot_mat, (400, 300))
+        cv2.imshow("Q 4.3", img)
+
+        self.img_4 = img
+
+    # Q 4.4
+    def shearing(self):
+        img = self.img_4
+
+        srcTri = np.array([[50.0, 50], [200, 50], [50, 200]], dtype=np.float32)
+        dstTri = np.array([[10.0, 100], [200, 50], [100, 250]], dtype=np.float32)
+
+        warp_mat = cv2.getAffineTransform(srcTri, dstTri)
+        img = cv2.warpAffine(img, warp_mat, (400, 300))
+        cv2.imshow("Q 4.4", img)
+
 
 if __name__ == '__main__':
     import sys
