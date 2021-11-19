@@ -22,6 +22,10 @@ class Main(QMainWindow, ui.Ui_MainWindow):
         self.Q2_1.clicked.connect(self.gaussian_blur)
         self.Q2_2.clicked.connect(self.bilateral_filter)
         self.Q2_3.clicked.connect(self.median_filter)
+        self.Q3_1.clicked.connect(self.gaussian_blur_)
+        self.Q3_2.clicked.connect(self.sobel_x)
+        self.Q3_3.clicked.connect(self.sobel_y)
+        self.Q3_4.clicked.connect(self.get_magnitude)
         self.Q4_1.clicked.connect(self.resize_img)
         self.Q4_2.clicked.connect(self.translation)
         self.Q4_3.clicked.connect(self.rotate_and_scale)
@@ -29,6 +33,7 @@ class Main(QMainWindow, ui.Ui_MainWindow):
 
         self.img_1 = cv2.imread("Dataset/Q1_Image/Sun.jpg")
         self.img_2 = cv2.imread("Dataset/Q2_Image/Lenna_whiteNoise.jpg")
+        self.img_3 = cv2.imread("Dataset/Q3_Image/House.jpg")
         self.img_4 = cv2.imread("Dataset/Q4_Image/SQUARE-01.png")
 
     # Q 1.1
@@ -128,6 +133,68 @@ class Main(QMainWindow, ui.Ui_MainWindow):
     # Q 2.3
     def median_filter(self):
         self.blur(3)
+
+    def blur_(self, f):
+        img = self.img_3
+        if f == 1:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        filter = np.array([])
+        if f == 1:
+            filter = np.array([[0.045, 0.122, 0.045], [0.122, 0.332, 0.122], [0.045, 0.122, 0.045]], dtype=np.float32)
+        elif f == 2:
+            filter = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
+        elif f == 3:
+            filter = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
+        else:
+            filter_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
+            filter_y = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
+
+        # img_ = np.zeros(img.shape)    # 用這個不知道為什麼結果會比較淡，然後 gaussian 的會一片白
+        img_ = img.copy()
+        for x in range(img.shape[1]):
+            for y in range(img.shape[0]):
+                blur = 0.0
+                if f == 4:
+                    blur_x = 0
+                    blur_y = 0
+                for i in range(3):
+                    for j in range(3):
+                        if f != 4:
+                            blur += img[y + i - 2][x + j - 2] * filter[i][j]
+                        else:
+                            blur_x += img[y + i - 2][x + j - 2] * filter_x[i][j]
+                            blur_y += img[y + i - 2][x + j - 2] * filter_y[i][j]
+
+                if f == 1:
+                    img_[y][x] = blur
+                elif f <= 3:
+                    img_[y][x] = blur if blur > 0 else 0
+                else:
+                    img_[y][x] = pow(pow(blur_x, 2) + pow(blur_y, 2), 0.5)
+
+        if f != 1:
+            img_ = (img_ - img_.min()) / (img_.max() - img_.min())
+
+        cv2.imshow(f"Q 3.{f}", img_)
+        if f == 1:
+            self.img_3 = img_
+
+    # Q 3.1
+    def gaussian_blur_(self):
+        self.blur_(1)
+
+    # Q 3.2
+    def sobel_x(self):
+        self.blur_(2)
+
+    # Q 3.3
+    def sobel_y(self):
+        self.blur_(3)
+
+    # Q 3.4
+    def get_magnitude(self):
+        self.blur_(4)
 
     # Q 4.1
     def resize_img(self):
