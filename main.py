@@ -19,7 +19,11 @@ class Main(QMainWindow, ui.Ui_MainWindow):
         self.Q1_2.clicked.connect(self.color_seperation)
         self.Q1_3.clicked.connect(self.color_trans)
         self.Q1_4.clicked.connect(self.blending)
+        self.Q2_1.clicked.connect(self.gaussian_blur)
+        self.Q2_2.clicked.connect(self.bilateral_filter)
+        self.Q2_3.clicked.connect(self.median_filter)
         self.img_1 = cv2.imread("Dataset/Q1_Image/Sun.jpg")
+        self.img_2 = cv2.imread("Dataset/Q2_Image/Lenna_whiteNoise.jpg")
 
     # Q 1.1
     def load_img(self):
@@ -81,6 +85,43 @@ class Main(QMainWindow, ui.Ui_MainWindow):
             cv2.imshow(win_name, img)
 
         cv2.createTrackbar("blend", win_name, 0, 255, callback)
+
+    def blur(self, filter):
+        if filter != 3:
+            img = self.img_2.copy()
+        else:
+            img = cv2.imread("Dataset/Q2_Image/Lenna_pepperSalt.jpg")
+
+        win_name = f"Q 2.{filter}_original"
+        cv2.imshow(win_name, img)
+        cv2.moveWindow(win_name, self.geometry().x() + 300, self.geometry().y())
+
+        if filter == 1:
+            img = cv2.GaussianBlur(img, [5, 5], 273)
+        elif filter == 2:
+            img = cv2.bilateralFilter(img, 9, 90, 90)
+        elif filter == 3:
+            img_ = cv2.medianBlur(img, 5)
+            img = cv2.medianBlur(img, 3)
+            win_name = "Q 2.3_result_2"
+            cv2.imshow(win_name, img_)
+            cv2.moveWindow(win_name, self.geometry().x() + 300 + img.shape[1] * 2, self.geometry().y())
+
+        win_name = f"Q 2.{filter}_result"
+        cv2.imshow(win_name, img)
+        cv2.moveWindow(win_name, self.geometry().x() + 300 + img.shape[1], self.geometry().y())
+
+    # Q 2.1
+    def gaussian_blur(self):
+        self.blur(1)
+
+    # Q 2.2
+    def bilateral_filter(self):
+        self.blur(2)
+
+    # Q 2.3
+    def median_filter(self):
+        self.blur(3)
 
 if __name__ == '__main__':
     import sys
