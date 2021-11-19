@@ -14,6 +14,73 @@ class Main(QMainWindow, ui.Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
+        # link button click function
+        self.Q1_1.clicked.connect(self.load_img)
+        self.Q1_2.clicked.connect(self.color_seperation)
+        self.Q1_3.clicked.connect(self.color_trans)
+        self.Q1_4.clicked.connect(self.blending)
+        self.img_1 = cv2.imread("Dataset/Q1_Image/Sun.jpg")
+
+    # Q 1.1
+    def load_img(self):
+        img = self.img_1
+        cv2.imshow("Q 1.1", img)
+        print(f"Height: {img.shape[0]}\nWidth: {img.shape[1]}")
+
+    # Q 1.2
+    def color_seperation(self):
+        img_B = self.img_1.copy()
+        img_B[:, :, 1] = 0
+        img_B[:, :, 2] = 0
+
+        img_G = self.img_1.copy()
+        img_G[:, :, 0] = 0
+        img_G[:, :, 2] = 0
+
+        img_R = self.img_1.copy()
+        img_R[:, :, 1] = 0
+        img_R[:, :, 0] = 0
+
+        cv2.imshow("Q 1.2_B", img_B)
+        cv2.moveWindow("Q 1.2_B", self.geometry().x() + 300, self.geometry().y())
+        cv2.imshow("Q 1.2_G", img_G)
+        cv2.moveWindow("Q 1.2_G", self.geometry().x() + 300 + img_G.shape[1], self.geometry().y())
+        cv2.imshow("Q 1.2_R", img_R)
+        cv2.moveWindow("Q 1.2_R", self.geometry().x() + 300 + + img_G.shape[1] * 2, self.geometry().y())
+
+    # Q 1.3
+    def color_trans(self):
+        img_1 = self.img_1.copy()
+        img_1 = cv2.cvtColor(img_1, cv2.COLOR_BGR2GRAY)
+        cv2.imshow("Q 1.3_1", img_1)
+        cv2.moveWindow("Q 1.3_1", self.geometry().x() + 300, self.geometry().y())
+        img_2 = self.img_1.copy()
+        gray = img_2.mean(axis=2)
+        # img_2 = np.stack([gray for _ in range(3)], axis=2)
+        img_2[:, :, 0] = gray
+        img_2[:, :, 1] = gray
+        img_2[:, :, 2] = gray
+
+        cv2.imshow("Q 1.3_2", img_2)
+        cv2.moveWindow("Q 1.3_2", self.geometry().x() + 300 + img_2.shape[1], self.geometry().y())
+
+    # Q 1.4
+    def blending(self):
+        img_1 = cv2.imread("Dataset/Q1_Image/Dog_Strong.jpg")
+        img_2 = cv2.imread("Dataset/Q1_Image/Dog_Weak.jpg")
+
+        win_name = "Q 1.4"
+        cv2.namedWindow(win_name, 0)
+        cv2.imshow(win_name, cv2.addWeighted(img_1, 1, img_2, 0, 0))    # initial img
+
+        def callback(v):
+            beta = v / 255
+            alpha = 1 - beta
+
+            img = cv2.addWeighted(img_1, alpha, img_2, beta, 0)
+            cv2.imshow(win_name, img)
+
+        cv2.createTrackbar("blend", win_name, 0, 255, callback)
 
 if __name__ == '__main__':
     import sys
